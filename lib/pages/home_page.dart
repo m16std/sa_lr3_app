@@ -80,6 +80,16 @@ class _TablePageState extends State<TablePage> {
     controllers.clear();
     for (int i = 0; i < rowCount; i++) {
       List<TextEditingController> rowControllers = [];
+      TextEditingController controller = TextEditingController();
+      controller.text = (i + 1).toString();
+      //
+      //
+      //
+      //Запретить изменение контроллера и убрать его из алгоритма сохранения
+      //
+      //
+      //
+      rowControllers.add(controller);
       for (int j = 0; j < columnCount; j++) {
         TextEditingController controller = TextEditingController();
         controller.text = tableData[i][j].toString();
@@ -212,9 +222,8 @@ class _TablePageState extends State<TablePage> {
 
   List<DataColumn> collumns(int count) {
     List<DataColumn> collumns_list = List.generate(
-        count,
-        (index) => DataColumn(
-            label: Text('${String.fromCharCode(97 + index).toUpperCase()}')));
+        count, (index) => DataColumn(label: Text('${(index + 1).toString()}')));
+    //${String.fromCharCode(97 + index).toUpperCase()}
     return collumns_list;
   }
 
