@@ -39,7 +39,7 @@ class _TablePageState extends State<TablePage> {
     List<List<int>> newData = [];
     for (int i = 0; i < tableData.length; i++) {
       List<int> row = [];
-      for (int j = 0; j < tableData[i].length; j++) {
+      for (int j = 1; j <= tableData[i].length; j++) {
         int value = int.parse(controllers[i][j].text);
         row.add(value);
       }
@@ -82,13 +82,6 @@ class _TablePageState extends State<TablePage> {
       List<TextEditingController> rowControllers = [];
       TextEditingController controller = TextEditingController();
       controller.text = (i + 1).toString();
-      //
-      //
-      //
-      //Запретить изменение контроллера и убрать его из алгоритма сохранения
-      //
-      //
-      //
       rowControllers.add(controller);
       for (int j = 0; j < columnCount; j++) {
         TextEditingController controller = TextEditingController();
@@ -103,7 +96,7 @@ class _TablePageState extends State<TablePage> {
     List<List<int>> newData = [];
     for (int i = 0; i < rowCount; i++) {
       List<int> row = [];
-      for (int j = 0; j < columnCount; j++) {
+      for (int j = 1; j <= columnCount; j++) {
         int value = int.parse(controllers[i][j].text);
         row.add(value);
       }
@@ -161,7 +154,7 @@ class _TablePageState extends State<TablePage> {
                   items: List.generate(20, (index) {
                     return DropdownMenuItem<int>(
                       value: index + 1,
-                      child: Text('${index + 1}'),
+                      child: Text('${index}'),
                     );
                   }),
                 ),
@@ -221,8 +214,12 @@ class _TablePageState extends State<TablePage> {
   }
 
   List<DataColumn> collumns(int count) {
-    List<DataColumn> collumns_list = List.generate(
-        count, (index) => DataColumn(label: Text('${(index + 1).toString()}')));
+    List<DataColumn> collumns_list = [];
+    collumns_list.add(DataColumn(label: Text('')));
+    for (int i = 1; i < columnCount; i++) {
+      collumns_list.add(DataColumn(label: Text('${(i).toString()}')));
+    }
+
     //${String.fromCharCode(97 + index).toUpperCase()}
     return collumns_list;
   }
@@ -239,7 +236,7 @@ class _TablePageState extends State<TablePage> {
               controller: controllers[i][j],
               decoration: InputDecoration(
                 //border: OutlineInputBorder(),
-                hintText: 'Enter data (-1, 0, 1)',
+                hintText: 'Enter only -1, 0, 1',
               ),
               onChanged: (value) {
                 if (value != '-' &&
@@ -503,6 +500,7 @@ class _TablePageState extends State<TablePage> {
             subgraphs: subgraphs,
             listOfincidenceL: getListOfincidence_l(),
             adjacencyMatrix: adjacencyMatrix,
+            incidenceMatrix: tableData,
           ),
         ),
       );

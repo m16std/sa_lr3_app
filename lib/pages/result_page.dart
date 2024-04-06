@@ -5,11 +5,16 @@ import 'package:graphview/GraphView.dart';
 
 class ResultPage extends StatefulWidget {
   const ResultPage(
-      {super.key, this.adjacencyMatrix, this.subgraphs, this.listOfincidenceL});
+      {super.key,
+      this.adjacencyMatrix,
+      this.subgraphs,
+      this.listOfincidenceL,
+      this.incidenceMatrix});
 
   final List<List<int>>? adjacencyMatrix;
   final List<List<int>>? subgraphs;
   final List<List<int>>? listOfincidenceL;
+  final List<List<int>>? incidenceMatrix;
 
   @override
   State<ResultPage> createState() => _ResultPageState();
@@ -62,8 +67,8 @@ class _ResultPageState extends State<ResultPage> {
           scrollDirection: Axis.vertical,
           children: [
             DataTable(
-              columns: list_buildColumns('Подсистемы'),
-              rows: list_buildRows(widget.subgraphs!),
+              columns: subsystem_buildColumns(),
+              rows: subsystem_buildRows(widget.subgraphs!),
               columnSpacing: 0.0,
             ),
             SizedBox(
@@ -89,7 +94,52 @@ class _ResultPageState extends State<ResultPage> {
     );
   }
 
-  // Создание столбцов таблицы
+  List<DataColumn> subsystem_buildColumns() {
+    List<DataColumn> columns = [];
+    columns.add(const DataColumn(label: Text('Подсистемы')));
+    columns.add(DataColumn(label: Text('Вершины')));
+    columns.add(DataColumn(label: Text('Дуги')));
+    return columns;
+  }
+
+  List<DataRow> subsystem_buildRows(List<List<int>> list) {
+    return list.asMap().entries.map((entry) {
+      int rowIndex = entry.key;
+      List<int> rowData = entry.value;
+      return DataRow(
+        cells: subsystem_buildCellsForRow(rowIndex, rowData, list),
+      );
+    }).toList();
+  }
+
+  List<DataCell> subsystem_buildCellsForRow(
+      int rowIndex, List<int> rowData, List<List<int>> list) {
+    List<DataCell> cells = [];
+    cells.add(DataCell(Text('${rowIndex + 1}')));
+    String text = '';
+    for (int i = 0; i < list[rowIndex].length; i++) {
+      text += (list[rowIndex][i] + 1).toString() + '  ';
+    }
+    cells.add(DataCell(Text(text)));
+    text = '';
+    for (int i = 0; i < widget.incidenceMatrix![0].length; i++) {
+      List<int> vershiny_v_duge = [];
+      for (int j = 0; j < widget.incidenceMatrix!.length; j++) {
+        if (widget.incidenceMatrix![j][i] != 0) {
+          vershiny_v_duge.add(j);
+        }
+      }
+      if (vershiny_v_duge.length == 2) {
+        if (list[rowIndex].contains(vershiny_v_duge[0]) &&
+            list[rowIndex].contains(vershiny_v_duge[1])) {
+          text += '${i + 1}   ';
+        }
+      }
+    }
+    cells.add(DataCell(Text(text)));
+    return cells;
+  }
+
   List<DataColumn> list_buildColumns(String name) {
     List<DataColumn> columns = [];
     columns.add(const DataColumn(label: Text(' ')));
@@ -97,7 +147,6 @@ class _ResultPageState extends State<ResultPage> {
     return columns;
   }
 
-  // Создание строк таблицы
   List<DataRow> list_buildRows(List<List<int>> list) {
     return list.asMap().entries.map((entry) {
       int rowIndex = entry.key;
@@ -108,7 +157,6 @@ class _ResultPageState extends State<ResultPage> {
     }).toList();
   }
 
-  // Создание ячеек для строки таблицы
   List<DataCell> list_buildCellsForRow(
       int rowIndex, List<int> rowData, List<List<int>> list) {
     List<DataCell> cells = [];
